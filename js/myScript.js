@@ -1,63 +1,68 @@
-var mess_a = document.getElementById("cau-a");
-var mess_b = document.getElementById("cau-b");
-var mess_c = document.getElementById("cau-c");
-
-var users = [
-  {
-    id: 1,
-    first_name: "Eamon",
-    last_name: "Harhoff",
-    email: "eharhoff0@imageshack.us",
-    gender: "Male",
-    age: 76,
-    salary: 18888,
-  },
-  {
-    id: 2,
-    first_name: "Laney",
-    last_name: "Whittam",
-    email: "lwhittam1@issuu.com",
-    gender: "Female",
-    age: 39,
-    salary: 15018,
-  },
-  {
-    id: 3,
-    first_name: "Lynett",
-    last_name: "Twinberrow",
-    email: "ltwinberrow2@gov.uk",
-    gender: "Female",
-    age: 99,
-    salary: 13343,
-  },
-];
-
-var myFilter = users.filter((value) => {
-  return value.gender.toLowerCase() == "female" && value.age < 40;
+let id = 0;
+document.getElementById("inputForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  if (this.inputName.value.trim() == "") {
+    this.inputName.classList.add("is-invalid");
+    this.inputName.focus();
+    this.inputName.nextElementSibling.nextElementSibling.innerText =
+      "Name is required";
+  } else {
+    this.inputName.classList.remove("is-invalid");
+    this.inputName.nextElementSibling.nextElementSibling.innerText = "";
+    addItem(this);
+    this.inputName.value = "";
+  }
 });
 
-console.log("- Cac users la Male va tuoi nho hon 40:");
-show(myFilter);
-
-//lay ten day du cua user
-var myMap = users.map((value) => {
-  return value.first_name + " " + value.last_name;
+document.getElementById("btnClearItems").addEventListener("click", function () {
+  deleteAllItem();
 });
-console.log("- Ten day du cua cac user:");
-show(myMap);
 
-//tinh trun gbinh do tuoi cac user
-var myReduce = users.reduce((acc, currValue) => {
-  return acc + currValue.age;
-}, 0);
+/*add item to list*/
+var addItem = (eForm) => {
+  var valueItem = eForm.inputName.value;
+  var divItem = document.createElement("div");
+  divItem.id = "item-" + id;
+  divItem.classList.add("row", "ml-0", "mr-0", "mb-2");
 
-var medium = myReduce / users.length;
-console.log("- Do tuoi trung binh cac users:");
-console.log(medium.toFixed(2));
+  divItem.innerHTML =
+    '<div class="col-sm-8 col-md-10 col-lg-11 p-0 text-left">' +
+    '<p class="m-0 pl-2">' +
+    valueItem +
+    "</p>" +
+    "</div>" +
+    '<div class="col-sm-4 col-md-2 col-lg-1 p-0">' +
+    '<i class="fa fa-edit text-primary ml-1" onclick="editItem(this);"></i>' +
+    '<i class="fa-regular fa-circle-xmark text-danger ml-1" onclick="deleteItem(this);"></i>' +
+    "</div>";
 
-//hien thi thong tin trong mang
-function show(arr) {
-  arr.forEach((element) => {
-    console.log(element);
-  });
-}
+  eForm.nextElementSibling.appendChild(divItem);
+  id++;
+};
+
+/*edit item*/
+var editItem = (e) => {
+  var parentIClick = e.parentElement;
+  var sibling = parentIClick.previousElementSibling.firstChild.innerText;
+
+  var inputForm = document.getElementById("inputForm");
+  inputForm.inputName.value = sibling;
+  deleteItem(e);
+};
+
+/*delete item*/
+var deleteItem = (e) => {
+  var parent = e.parentElement;
+  var parentId = parent.parentElement.id;
+  var element = document.getElementById(parentId);
+  element.remove();
+};
+
+/*delete all item*/
+var deleteAllItem = (e) => {
+  var inputForm = document.getElementById("inputForm");
+  var items = inputForm.nextElementSibling;
+  while (items.hasChildNodes()) {
+    items.removeChild(items.firstChild);
+  }
+};
